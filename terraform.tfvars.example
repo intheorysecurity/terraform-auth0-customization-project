@@ -1,0 +1,19 @@
+//Auth0 Config
+auth0_client_name = "exampleClient"
+auth0_domain = "example.us.auth0.com"
+auth0_clientID = "applicationClientID"
+auth0_client_secret = "applicationClientSecret"
+
+//Custom Domain
+custom_domain = custom.domain.com
+
+//Prompts to Enable
+create_signup_prompt = true
+create_signup_id_prompt = true
+create_signup_password_prompt = true
+create_login_prompt = true
+create_login_id_prompt = true
+create_login_password_prompt = true
+
+//Optional
+//auth0_debug

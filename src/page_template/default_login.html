@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="{{locale}}">
+
+<head>
+  {%- auth0:head -%}
+  <style>
+    body {
+      background-image: url("${background-image}");
+      background-size: center;
+      background-repeat: no-repeat;
+      background-position: center;
+    }
+  </style>
+</head>
+
+<body class="_widget-auto-layout">
+  {%- auth0:widget -%}
+</body>
+
+</html>
