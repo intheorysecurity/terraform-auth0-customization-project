@@ -8,7 +8,7 @@ resource "auth0_custom_domain" "intheory_custom_domain" {
 //Grab AWS DNS zone info
 data "aws_route53_zone" "primary" {
   count        = var.dns_providers == "aws" ? 1 : 0
-  name         = var.aws_root_domain
+  name         = var.root_domain
   private_zone = false
 }
 
@@ -29,17 +29,18 @@ resource "auth0_custom_domain_verification" "custom_domain_verification" {
 }
 
 resource "auth0_prompt" "my_prompt" {
-  universal_login_experience     = "new"
-  identifier_first               = false
-  webauthn_platform_first_factor = true
+  universal_login_experience     = var.universal_login_experience
+  identifier_first               = var.identifier_first
+  webauthn_platform_first_factor = var.webauthn_platform_first_factor
 }
 
+//Add Global Tenant Branding
 resource "auth0_branding" "tenant_brand" {
   logo_url = var.logo_url
 
   colors {
     primary         = var.primary_color
-    page_background = var.page_background
+    page_background = var.page_background_color
   }
 
   universal_login {
@@ -49,6 +50,7 @@ resource "auth0_branding" "tenant_brand" {
   depends_on = [auth0_custom_domain_verification.custom_domain_verification]
 }
 
+//Add Branding Theme to Auth0 Tenant
 resource "auth0_branding_theme" "tenant_brand_theme" {
   borders {}
   fonts {
@@ -62,7 +64,7 @@ resource "auth0_branding_theme" "tenant_brand_theme" {
   colors {}
 
   page_background {
-    background_color     = var.page_background
+    background_color     = var.page_background_color
     background_image_url = var.background_image_url
   }
   widget {
@@ -70,133 +72,75 @@ resource "auth0_branding_theme" "tenant_brand_theme" {
   }
 }
 
+/*
+This section contains examples no how to create the 
+following partials prompts within your Okta CIC Tenant
 
-//Create custom login prompt 
-resource "auth0_prompt_partials" "login_prompt_partials" {
-  count  = var.enable_login_prompt ? 1 : 0
-  prompt = "login"
-
-  # form_content_start      = "<div>Updated Form Content Start</div>"
-  # form_content_end        = "<div>Updated Form Content End</div>"
-  # form_footer_start       = "<div>Updated Footer Start</div>"
-  form_footer_end = file("${path.module}/src/sample_prompts/login_prompt/form_footer_end.html")
-  # secondary_actions_start = "<div>Updated Secondary Actions Start</div>"
-  # secondary_actions_end = "<div>Update Secondary Actions End</div>"
+- Login Prompt
+- Login ID Prompt
+- Login Password Prompt
+- Signup Prompt
+- Signup ID Prompt
+- Signup Password Prompt
+*/
+//Example of a Custom Login Prompt
+module "login_prompt_partials" {
+  count                = var.enable_login_prompt ? 1 : 0
+  source               = "./modules/prompt_partials"
+  prompt               = "login"
+  isCustomDomainEnable = var.enable_custom_domain_record
+  form_footer_end      = file("${path.module}/src/sample_prompts/login_prompt/form_footer_end.html")
 
   depends_on = [auth0_branding.tenant_brand, auth0_custom_domain_verification.custom_domain_verification]
-
-  lifecycle {
-    precondition {
-      condition     = var.enable_custom_domain_record
-      error_message = "Custom domain record must be enabled"
-    }
-  }
 }
 
-resource "auth0_prompt_partials" "login_id_prompt_partials" {
-  count  = var.enable_login_id_prompt ? 1 : 0
-  prompt = "login-id"
-
-  # form_content_start      = "<div>Updated Form Content Start</div>"
-  form_content_end = file("${path.module}/src/sample_prompts/login_id_prompt/form_content_end.html")
-  # form_footer_start       = "<div>Updated Footer Start</div>"
-  # form_footer_end         = "<div>Updated Footer End</div>"
-  # secondary_actions_start = "<div>Updated Secondary Actions Start</div>"
-  # secondary_actions_end   = "<div>Updated Secondary Actions End</div>"
+module "login_id_prompt_partials" {
+  count                = var.enable_login_id_prompt ? 1 : 0
+  source               = "./modules/prompt_partials"
+  prompt               = "login-id"
+  isCustomDomainEnable = var.enable_custom_domain_record
+  form_content_end     = file("${path.module}/src/sample_prompts/login_id_prompt/form_content_end.html")
 
   depends_on = [auth0_branding.tenant_brand, auth0_custom_domain_verification.custom_domain_verification]
-
-  lifecycle {
-    precondition {
-      condition     = var.enable_custom_domain_record
-      error_message = "Custom domain record must be enabled"
-    }
-  }
 }
 
-resource "auth0_prompt_partials" "login_password_prompt_partials" {
-  count  = var.enable_login_password_prompt ? 1 : 0
-  prompt = "login-password"
-
-  # form_content_start      = "<div>Updated Form Content Start</div>"
-  form_content_end = file("${path.module}/src/sample_prompts/login_password_prompt/form_content_end.html")
-  # form_footer_start       = "<div>Updated Footer Start</div>"
-  # form_footer_end         = "<div>Updated Footer End</div>"
-  # secondary_actions_start = "<div>Updated Secondary Actions Start</div>"
-  # secondary_actions_end   = "<div>Updated Secondary Actions End</div>"
+module "login_password_prompt_partials" {
+  count                = var.enable_login_password_prompt ? 1 : 0
+  source               = "./modules/prompt_partials"
+  prompt               = "login-password"
+  isCustomDomainEnable = var.enable_custom_domain_record
+  form_content_end     = file("${path.module}/src/sample_prompts/login_password_prompt/form_content_end.html")
 
   depends_on = [auth0_branding.tenant_brand, auth0_custom_domain_verification.custom_domain_verification]
-
-  lifecycle {
-    precondition {
-      condition     = var.enable_custom_domain_record
-      error_message = "Custom domain record must be enabled"
-    }
-  }
 }
 
-//Create custom Sign Up Prompt
-resource "auth0_prompt_partials" "signup_prompt_partials" {
-  count  = var.enable_signup_prompt ? 1 : 0
-  prompt = "signup"
-
-  # form_content_start      = "<div>Updated Form Content Start</div>"
-  form_content_end = file("${path.module}/src/sample_prompts/signup_prompt/form_content_end.html")
-  # form_footer_start       = "<div>Updated Footer Start</div>"
-  # form_footer_end         = "<div>Updated Footer End</div>"
-  # secondary_actions_start = "<div>Updated Secondary Actions Start</div>"
-  # secondary_actions_end   = "<div>Updated Secondary Actions End</div>"
+//Example of a custom Sign Up Prompt
+module "signup_prompt_partials" {
+  count                = var.enable_signup_prompt ? 1 : 0
+  source               = "./modules/prompt_partials"
+  prompt               = "signup"
+  isCustomDomainEnable = var.enable_custom_domain_record
+  form_content_end     = file("${path.module}/src/sample_prompts/signup_prompt/form_content_end.html")
 
   depends_on = [auth0_branding.tenant_brand, auth0_custom_domain_verification.custom_domain_verification]
-
-  lifecycle {
-    precondition {
-      condition     = var.enable_custom_domain_record
-      error_message = "Custom Domain record must be enabled"
-    }
-  }
 }
 
-//Create custom Sign Up Prompt
-resource "auth0_prompt_partials" "signup_id_prompt_partials" {
-  count  = var.enable_signup_id_prompt ? 1 : 0
-  prompt = "signup-id"
-
-  # form_content_start      = "<div>Updated Form Content Start</div>"
-  form_content_end = file("${path.module}/src/sample_prompts/signup_id_prompt/form_content_end.html")
-  # form_footer_start       = "<div>Updated Footer Start</div>"
-  # form_footer_end         = "<div>Updated Footer End</div>"
-  # secondary_actions_start = "<div>Updated Secondary Actions Start</div>"
-  # secondary_actions_end   = "<div>Updated Secondary Actions End</div>"
+module "signup_id_prompt_partials" {
+  count                = var.enable_signup_id_prompt ? 1 : 0
+  source               = "./modules/prompt_partials"
+  prompt               = "signup-id"
+  isCustomDomainEnable = var.enable_custom_domain_record
+  form_content_end     = file("${path.module}/src/sample_prompts/signup_id_prompt/form_content_end.html")
 
   depends_on = [auth0_branding.tenant_brand, auth0_custom_domain_verification.custom_domain_verification]
-
-  lifecycle {
-    precondition {
-      condition     = var.enable_custom_domain_record
-      error_message = "Custom Domain record must be enabled"
-    }
-  }
 }
 
-//Create custom Sign Up Prompt
-resource "auth0_prompt_partials" "signup_password_prompt_partials" {
-  count  = var.enable_signup_password_prompt ? 1 : 0
-  prompt = "signup-password"
-
-  # form_content_start      = "<div>Updated Form Content Start</div>"
-  form_content_end = file("${path.module}/src/sample_prompts/signup_password_prompt/form_content_end.html")
-  # form_footer_start       = "<div>Updated Footer Start</div>"
-  # form_footer_end         = "<div>Updated Footer End</div>"
-  # secondary_actions_start = "<div>Updated Secondary Actions Start</div>"
-  # secondary_actions_end   = "<div>Updated Secondary Actions End</div>"
+module "signup_password_prompt_partials" {
+  count                = var.enable_signup_password_prompt ? 1 : 0
+  source               = "./modules/prompt_partials"
+  prompt               = "signup-password"
+  isCustomDomainEnable = var.enable_custom_domain_record
+  form_content_end     = file("${path.module}/src/sample_prompts/signup_password_prompt/form_content_end.html")
 
   depends_on = [auth0_branding.tenant_brand, auth0_custom_domain_verification.custom_domain_verification]
-
-  lifecycle {
-    precondition {
-      condition     = var.enable_custom_domain_record
-      error_message = "Custom Domain record must be enabled"
-    }
-  }
 }

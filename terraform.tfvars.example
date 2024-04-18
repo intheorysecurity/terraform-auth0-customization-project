@@ -1,19 +1,46 @@
-//Auth0 Config
-auth0_client_name = "exampleClient"
-auth0_domain = "example.us.auth0.com"
-auth0_clientID = "applicationClientID"
-auth0_client_secret = "applicationClientSecret"
+//************************************
+//  AWS Environment Variables Section
+//************************************
+aws_region     = "us-east-1"
+aws_access_key = "my-access-key"
+aws_secret_key = "my-secret-key"
 
-//Custom Domain
-custom_domain = custom.domain.com
+//AWS DNS Block
+aws_root_domain = "example.local"
+
+//************************************
+//  Auth0 Tenant Variables Section
+//************************************
+auth0_domain        = "example.us.auth0.com"
+auth0_clientID      = "applicationClientID"
+auth0_client_secret = "applicationClientSecret"
+//Optional
+# auth0_debug = true
+
+
+//Additional Auth0 Branding options
+
+//Auth0 Prompts
+# universal_login_experience = "new"
+# identifier_first = false
+# webauthn_platform_first_factor = true
+
+//Auth0 Branding
+logo_url              = "<URL endpoint to company logo>"
+primary_color         = "<HEX Color Value>"
+page_background_color = "<HEX Color Value>"
+background_image_url  = "<URL endpoint to company background Image>"
+
+/* Auth0 configuration required to enable a custom domain */
+enable_custom_domain_record = true
+dns_providers               = "aws"
+custom_domain               = "customdomain.example.local"
+root_domain = "example.local"
 
 //Prompts to Enable
-create_signup_prompt = true
-create_signup_id_prompt = true
-create_signup_password_prompt = true
-create_login_prompt = true
-create_login_id_prompt = true
-create_login_password_prompt = true
-
-//Optional
-//auth0_debug
+#enable_signup_prompt          = true
+#enable_signup_id_prompt       = true
+#enable_signup_password_prompt = true
+#enable_login_prompt           = true
+#enable_login_id_prompt        = true
+#enable_login_password_prompt  = true
