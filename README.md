@@ -66,13 +66,18 @@ auth0_client_secret = "applicationClientSecret"
 >```powershell
 >/* Auth0 configuration required to enable a custom domain */
 >enable_custom_domain_record = true
->dns_providers               = "aws"
+>dns_provider                = "aws"
 >custom_domain               = "<Your custom domain URL> (e.g customdomain.example.local)"
 >root_domain                 = "<Your root domain> (e.g example.local)"
 >```
 >
 >* Digital Ocean (COMING SOON)
 
+### Enable sample signup and login prompts
+
+>Customize Signup and Login Prompts is a feature that allows customers with Custom Domain and Custom Page Template enabled to add custom fields and content to their app’s signup and login prompts.
+
+1. Add the following configuration to your
 
 ## Contributing
 ---

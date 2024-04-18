@@ -33,9 +33,9 @@ background_image_url  = "<URL endpoint to company background Image>"
 
 /* Auth0 configuration required to enable a custom domain */
 enable_custom_domain_record = true
-dns_providers               = "aws"
+dns_provider                = "aws"
 custom_domain               = "customdomain.example.local"
-root_domain = "example.local"
+root_domain                 = "example.local"
 
 //Prompts to Enable
 #enable_signup_prompt          = true

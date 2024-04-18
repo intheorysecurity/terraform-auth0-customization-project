@@ -7,14 +7,14 @@ resource "auth0_custom_domain" "intheory_custom_domain" {
 
 //Grab AWS DNS zone info
 data "aws_route53_zone" "primary" {
-  count        = var.dns_providers == "aws" ? 1 : 0
+  count        = var.dns_provider == "aws" ? 1 : 0
   name         = var.root_domain
   private_zone = false
 }
 
 //Create custom DNS record in AWS Route53
 resource "aws_route53_record" "custom" {
-  count   = var.dns_providers == "aws" && var.enable_custom_domain_record ? 1 : 0
+  count   = var.dns_provider == "aws" && var.enable_custom_domain_record ? 1 : 0
   zone_id = data.aws_route53_zone.primary[0].zone_id
   name    = var.custom_domain
   type    = auth0_custom_domain.intheory_custom_domain[0].verification[0].methods[0].name
@@ -73,9 +73,10 @@ resource "auth0_branding_theme" "tenant_brand_theme" {
 }
 
 /*
+----- CUSTOM PROMPT PARTIALS SECTIONS -----
+
 This section contains examples no how to create the 
 following partials prompts within your Okta CIC Tenant
-
 - Login Prompt
 - Login ID Prompt
 - Login Password Prompt
@@ -83,7 +84,6 @@ following partials prompts within your Okta CIC Tenant
 - Signup ID Prompt
 - Signup Password Prompt
 */
-//Example of a Custom Login Prompt
 module "login_prompt_partials" {
   count                = var.enable_login_prompt ? 1 : 0
   source               = "./modules/prompt_partials"

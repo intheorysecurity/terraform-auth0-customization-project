@@ -196,7 +196,7 @@ variable "enable_custom_domain_record" {
   default = false
 }
 
-variable "dns_providers" {
+variable "dns_provider" {
   type        = string
   description = "Your Domain Name System(DNS) serice. Currently supported DNS providers: AWS"
   default     = "aws"
