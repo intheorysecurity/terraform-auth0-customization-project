@@ -58,24 +58,20 @@ auth0_client_secret = "applicationClientSecret"
 # auth0_debug = true
 ```
 
-### Enable selective features
-This following section will provide a walkthrough on how to custom your Okta CIC tenant
-
 > [!NOTE]
 > In order to leverage the following features, you need to enable a custom domain on your CIC Tenant.
-
-1. In your terraform.tfvars add the following:
-
-* AWS Route 53
-```powershell
-/* Auth0 configuration required to enable a custom domain */
-enable_custom_domain_record = true
-dns_providers               = "aws"
-custom_domain               = "customdomain.example.local"
-```
-
-* Digital Ocean (COMING SOON)
-    
+> You can manual create a custom domain within your CIC Tenant by clicking [here](https://auth0.com/docs/customize/custom-domains/auth0-managed-certificates), or add the following to your terraform.tfvars file depending on your DNS provider
+>
+>* AWS Route 53
+>```powershell
+>/* Auth0 configuration required to enable a custom domain */
+>enable_custom_domain_record = true
+>dns_providers               = "aws"
+>custom_domain               = "<Your custom domain URL> (e.g customdomain.example.local)"
+>root_domain                 = "<Your root domain> (e.g example.local)"
+>```
+>
+>* Digital Ocean (COMING SOON)
 
 
 ## Contributing
